@@ -1,0 +1,17 @@
+whisper-timestamped @git+https://github.com/linto-ai/whisper-timestamped@127e8b738756420487210490d09938593244b3dd
+
+
+torch
+torchaudio
+
+nvidia-tensorrt
+transformers
+
+numba==1.25
+llvmlite
+
+uvicorn
+python-multipart
+fastapi
+pydantic
+starlette
