@@ -1,13 +1,8 @@
-import json
 import os
-from io import StringIO
-from typing import List, Tuple
 from pathlib import Path
 
-from fastapi import FastAPI, UploadFile, Form, File, Header, Request, Security
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import StreamingResponse, HTMLResponse, FileResponse, Response, JSONResponse
-from starlette.templating import Jinja2Templates
+from fastapi import FastAPI, Request, Security
+from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
 
 from stt.manager import STTManager
@@ -18,9 +13,6 @@ main_dir = Path(__file__).parent
 
 stt_manager = STTManager()
 api_key_header = APIKeyHeader(name="X-API-Key")
-
-host = os.getenv("STT_HOST", "")
-prefix = os.getenv("STT_PREFIX", "")
 
 api_keys = os.getenv("STT_API_KEYS", "test").split(",")
 
