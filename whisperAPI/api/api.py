@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, Security
 from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
 
-from stt.manager import STTManager
+from whisperAPI.stt.manager import STTManager
 
 app = FastAPI()
 
@@ -35,4 +35,4 @@ async def write_upload(request: Request, api_key: str = Security(api_key_header)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=5464)
