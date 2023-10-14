@@ -2,7 +2,7 @@ import requests
 from io import BytesIO
 audio = "7206340881052372229.wav"
 
-url = "http://localhost:8000/"
+url = "https://whisper.marceau-h.fr/"
 
 headers = {
     'content-type': 'audio/wav',

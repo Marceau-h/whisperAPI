@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, Security
 from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
 
-from whisperAPI.stt.manager import STTManager
+from manager import STTManager
 
 app = FastAPI()
 
