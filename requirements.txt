@@ -7,7 +7,7 @@ torchaudio
 nvidia-tensorrt
 transformers
 
-numba==1.25
+numba<=1.25
 llvmlite
 
 uvicorn

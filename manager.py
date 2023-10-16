@@ -40,5 +40,10 @@ def process_file(audio_file: str | Path, model=None) -> dict:
             model.to(torch.device("cpu"))
 
     audio = whisper.load_audio(audio_file)
-    result = whisper.transcribe(model, audio, language="fr")
+    try:
+        result = whisper.transcribe(model, audio, language="fr")
+        print(result)
+    except:
+        pass
+        raise
     return result
