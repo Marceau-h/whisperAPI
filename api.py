@@ -45,7 +45,7 @@ async def write_upload(request: Request, api_key: str = Security(api_key_header)
         if json_file.exists():
             print("Already processed")
             with json_file.open(mode="r", encoding="utf-8") as f:
-                return {"launched": False, "hash": hash_audio, "status": "done", "result": json.load(f)}
+                return {"launched": False, "hash": hash_audio, "status": "done"}  # , "result": json.load(f)}
 
         return {"launched": False, "hash": hash_audio, "status": "processing"}
 
@@ -101,15 +101,15 @@ async def get_result_segments(hash_audio: str, api_key: str = Security(api_key_h
     if result["status"] != "done":
         return result
 
-    segments = [e["text"] for e in result["result"]["segments"]]
+    segments = [e["text"].strip() for e in result["result"]["segments"]]
     span = [(int(e['start']), int(e['end'])) for e in result["result"]["segments"]]
     confidence = [e["confidence"] for e in result["result"]["segments"]]
 
     res = [
         {
             "span": s,
+            "confidence": c,
             "text": t,
-            "confidence": c
         }
         for s, t, c in zip(span, segments, confidence)
     ]
@@ -123,15 +123,15 @@ async def get_result_words(hash_audio: str, api_key: str = Security(api_key_head
     if result["status"] != "done":
         return result
 
-    words = [e["text"] for segment in result["result"]["segments"] for e in segment["words"]]
+    words = [e["text"].strip() for segment in result["result"]["segments"] for e in segment["words"]]
     span = [(int(e['start']), int(e['end'])) for segment in result["result"]["segments"] for e in segment["words"]]
     confidence = [e["confidence"] for segment in result["result"]["segments"] for e in segment["words"]]
 
     res = [
         {
             "span": s,
+            "confidence": c,
             "text": t,
-            "confidence": c
         }
         for s, t, c in zip(span, words, confidence)
     ]
