@@ -4,9 +4,6 @@ from time import sleep
 
 from STT import STTManager
 
-def print(*args, **kwargs):
-    pass
-
 def main(folder: Path):
     stt_manager = STTManager()
 
@@ -16,8 +13,6 @@ def main(folder: Path):
     to_process_dir.mkdir(exist_ok=True)
 
     while True:
-        print("Checking for new files")
-
         to_process = {e.stem for e in to_process_dir.glob("*.wav")}
         results = {e.stem for e in results_dir.glob("*.json")}
         processing_set = to_process - results
@@ -42,7 +37,6 @@ def main(folder: Path):
                 json.dump(result, f)
 
         sleep(10)
-
 
         # old_processing_set = set(processing_list)
 

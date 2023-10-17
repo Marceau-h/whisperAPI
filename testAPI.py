@@ -9,7 +9,7 @@ url = "https://whisper.marceau-h.fr/"
 # url = "http://localhost:5464/"
 
 headers = {
-    'content-type': 'audio/wav',
+    "content-type": "audio/wav",
     "X-API-Key": "test"
 }
 
@@ -24,6 +24,8 @@ def test():
 
     if not launched:
         print(f"Already launched: {hash_audio}, {status}")
+
+    del headers["content-type"]
 
     if status != "done":
         while True:
