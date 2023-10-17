@@ -2,6 +2,7 @@ from time import sleep
 
 import requests
 from io import BytesIO
+
 audio = "7206340881052372229.wav"
 
 url = "https://whisper.marceau-h.fr/"
@@ -36,14 +37,23 @@ def test():
 
             sleep(20)
 
-
     r = requests.get(url + f"result/{hash_audio}", headers=headers)
 
-    print(r.text)
+    data = r.json()
 
-test()
+    segments = [e["text"] for e in data["result"]["segments"]]
+    span = [(int(e['start']), int(e['end'])) for e in data["result"]["segments"]]
+
+    res = [
+        {
+            "span": s,
+            "text": t
+        }
+        for s, t in zip(span, segments)
+    ]
+
+    return res
 
 
-
-
-
+if __name__ == "__main__":
+    print(test())
