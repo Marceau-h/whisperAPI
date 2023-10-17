@@ -12,10 +12,19 @@ def main(folder: Path):
     results_dir.mkdir(exist_ok=True, parents=True)
     to_process_dir.mkdir(exist_ok=True)
 
+    previous_empty = 0
     while True:
         to_process = {e.stem for e in to_process_dir.glob("*.wav")}
         results = {e.stem for e in results_dir.glob("*.json")}
         processing_set = to_process - results
+
+        if not processing_set:
+            previous_empty += 1
+            print(f"No new files since {previous_empty} iterations")
+            sleep(min(60, 3 * previous_empty))  # Wait a bit before checking again, up to 1 minute
+            continue
+        else:
+            previous_empty = 0
 
         print(f"Found {len(processing_set)} new files")
 
@@ -35,10 +44,6 @@ def main(folder: Path):
 
             with result_file.open(mode="w", encoding="utf-8") as f:
                 json.dump(result, f)
-
-        sleep(10)
-
-        # old_processing_set = set(processing_list)
 
 
 if __name__ == "__main__":
