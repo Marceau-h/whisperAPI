@@ -9,15 +9,7 @@ class STTManager:
     def __init__(self):
         torch.cuda.empty_cache()
 
-        model = whisper.load_model("bofenghuang/whisper-large-v2-french")
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        try:
-            model.to(device)
-        except:
-            print(f"Unable to load model on {device}")
-            model.to(torch.device("cpu"))
-
-        self.model = model
+        self.model, self.device = modelloader()
 
     def process_file(self, audio_file: str | Path) -> dict:
         return process_file(audio_file, self.model)
@@ -31,19 +23,26 @@ class STTManager:
 
 def process_file(audio_file: str | Path, model=None) -> dict:
     if model is None:
-        model = whisper.load_model("bofenghuang/whisper-large-v2-french")
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        try:
-            model.to(device)
-        except:
-            print(f"Unable to load model on {device}")
-            model.to(torch.device("cpu"))
+        model, _ = modelloader()
 
     audio = whisper.load_audio(audio_file)
     try:
         result = whisper.transcribe(model, audio, language="fr")
-        print(result)
+        # print(result)
     except:
-        pass
+        pass  # For breakpoint
         raise
     return result
+
+
+def modelloader(uri: str = "bofenghuang/whisper-large-v2-french"):
+    model = whisper.load_model(uri)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    try:
+        model.to(device)
+    except:
+        print(f"Unable to load model on {device}")
+        device = torch.device("cpu")
+        model.to(device)
+
+    return model, device
