@@ -4,9 +4,9 @@ import requests
 from io import BytesIO
 audio = "7206340881052372229.wav"
 
-# url = "https://whisper.marceau-h.fr/"
+url = "https://whisper.marceau-h.fr/"
 # url = "http://localhost:8000/"
-url = "http://localhost:5464/"
+# url = "http://localhost:5464/"
 
 headers = {
     'content-type': 'audio/wav',
