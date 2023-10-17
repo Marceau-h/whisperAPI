@@ -21,6 +21,10 @@ class STTManager:
             results[audio.name] = self.process_file(audio)
         return results
 
+    def __del__(self):
+        torch.cuda.empty_cache()
+        print("Emptied cache")
+
 def process_file(audio_file: str | Path, model=None) -> dict:
     if model is None:
         model, _ = modelloader()
