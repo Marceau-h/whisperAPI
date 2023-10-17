@@ -31,7 +31,7 @@ async def write_upload(request: Request, api_key: str = Security(api_key_header)
 
     if api_key not in api_keys:
         print("Wrong API Key")
-        return {"error": "Wrong API Key"}
+        return {"error": "Wrong API Key", "status": "error"}
 
     audio = await request.body()
 
@@ -59,7 +59,7 @@ async def write_upload(request: Request, api_key: str = Security(api_key_header)
 @app.get("/status/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
     if api_key not in api_keys:
-        return {"error": "Wrong API Key"}
+        return {"error": "Wrong API Key", "status": "error"}
 
     jsonfile = results / f"{hash_audio}.json"
     audiofile = to_process / f"{hash_audio}.wav"
@@ -75,7 +75,7 @@ async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
 @app.get("/result/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
     if api_key not in api_keys:
-        return "Wrong API Key"
+        return {"error": "Wrong API Key", "status": "error"}
 
     jsonfile = results / f"{hash_audio}.json"
 
@@ -84,6 +84,59 @@ async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
 
     with jsonfile.open(mode="r", encoding="utf-8") as f:
         return {"status": "done", "result": json.load(f)}
+
+@app.get("/result/{hash_audio}/text", response_class=JSONResponse, status_code=200)
+async def get_result_text(hash_audio: str, api_key: str = Security(api_key_header)):
+    result = await get_result(hash_audio, api_key)
+
+    if result["status"] != "done":
+        return result
+
+    return {"status": "done", "result": result["result"]["text"]}
+
+@app.get("/result/{hash_audio}/segments", response_class=JSONResponse, status_code=200)
+async def get_result_segments(hash_audio: str, api_key: str = Security(api_key_header)):
+    result = await get_result(hash_audio, api_key)
+
+    if result["status"] != "done":
+        return result
+
+    segments = [e["text"] for e in result["result"]["segments"]]
+    span = [(int(e['start']), int(e['end'])) for e in result["result"]["segments"]]
+    confidence = [e["confidence"] for e in result["result"]["segments"]]
+
+    res = [
+        {
+            "span": s,
+            "text": t,
+            "confidence": c
+        }
+        for s, t, c in zip(span, segments, confidence)
+    ]
+
+    return {"status": "done", "result": res}
+
+@app.get("/result/{hash_audio}/words", response_class=JSONResponse, status_code=200)
+async def get_result_words(hash_audio: str, api_key: str = Security(api_key_header)):
+    result = await get_result(hash_audio, api_key)
+
+    if result["status"] != "done":
+        return result
+
+    words = [e["text"] for segment in result["result"]["segments"] for e in segment["words"]]
+    span = [(int(e['start']), int(e['end'])) for segment in result["result"]["segments"] for e in segment["words"]]
+    confidence = [e["confidence"] for segment in result["result"]["segments"] for e in segment["words"]]
+
+    res = [
+        {
+            "span": s,
+            "text": t,
+            "confidence": c
+        }
+        for s, t, c in zip(span, words, confidence)
+    ]
+
+    return {"status": "done", "result": res}
 
 
 
