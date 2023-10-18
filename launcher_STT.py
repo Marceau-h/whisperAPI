@@ -16,7 +16,7 @@ def main(folder: Path):
     previous_empty = 0
     while True:
         all_audios = to_process_dir.iterdir()
-        all_audios = {e.stem: e.name for e in all_audios}
+        all_audios = {e.stem: e for e in all_audios}
 
         # to_process = {
         #     e.stem for e in (
