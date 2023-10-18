@@ -14,8 +14,10 @@ def main(folder: Path):
 
     previous_empty = 0
     while True:
+        all_audios = to_process_dir.iterdir()
+        all_audios = {e.stem: e.name for e in all_audios}
 
-        to_process = {e.stem for e in to_process_dir.glob("*.wav")}
+        to_process = {e.stem for e in (to_process_dir.glob("*.wav") + to_process_dir.glob("*.mp3") + to_process_dir.glob("*.ogg") + to_process_dir.glob("*.acc"))}
         results = {e.stem for e in results_dir.glob("*.json")}
         processing_set = to_process - results
 
@@ -32,7 +34,7 @@ def main(folder: Path):
         print(f"Found {len(processing_set)} new files")
 
         for audio in processing_set:
-            audio_file = to_process_dir / f"{audio}.wav"
+            audio_file = all_audios[audio]
             result_file = results_dir / f"{audio}.json"
 
             audio_file = audio_file.resolve()
