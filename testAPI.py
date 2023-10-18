@@ -7,18 +7,28 @@ audio = "7206340881052372229.wav"
 
 url = "https://whisper.marceau-h.fr/"
 # url = "http://localhost:8000/"
-# url = "http://localhost:5464/"
+url = "http://localhost:5464/"
+# url = "http://192.168.2.2:5464/"
 
 headers = {
-    "content-type": "audio/wav",
-    "X-API-Key": "test"
+    "X-API-Key": "test",
 }
 
 
 def test():
     with open(audio, 'rb') as f:
-        r = requests.post(url, headers=headers, data=BytesIO(f.read()))
-        print(r.text)
+        data = f.read()
+
+    # formdata = {
+    #     # "Content-Type": "audio/wav",
+    #     "data": BytesIO(data),
+    #     "Content-Disposition": "form-data; name=file; filename=7206340881052372229.wav"
+    # }
+
+    files = {'file': ('7206340881052372229.wav', open('7206340881052372229.wav', 'rb'), 'audio/wav')}
+
+    r = requests.post(url, headers=headers, files=files)
+    print(r.text)
     hash_audio = r.json()["hash"]
     status = r.json()["status"]
     launched = r.json()["launched"]
@@ -26,7 +36,6 @@ def test():
     if not launched:
         print(f"Already launched: {hash_audio}, {status}")
 
-    del headers["content-type"]
 
     if status != "done":
         while True:

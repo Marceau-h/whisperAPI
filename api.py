@@ -2,11 +2,11 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from typing import Annotated
 
-from fastapi import FastAPI, Request, Security
+from fastapi import FastAPI, Request, Security, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
-
 
 app = FastAPI()
 
@@ -26,18 +26,31 @@ def get_audio_hash(audio):
 
 
 @app.post("/", response_class=JSONResponse, status_code=200)
-async def write_upload(request: Request, api_key: str = Security(api_key_header)):
-    print(f"Connnection from {request.client.host}")
+async def write_upload(
+        file: UploadFile,
+        request: Request,
+        api_key: str = Security(api_key_header),
+):
+
+    print(f"Connnection from {request.client.host}, {api_key = }, {file.filename = }, {file.content_type = }")
 
     if api_key not in api_keys:
         print("Wrong API Key")
         return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
 
-    audio = await request.body()
+    if not file.content_type.startswith("audio/"):
+        print("Wrong content type")
+        return JSONResponse({"error": "Wrong content type", "status": "error"}, status_code=400)
+
+    extension = file.filename.split(".")[-1]
+    if extension != file.content_type.split("/")[-1]:
+        print(f"mismatch between extension ({extension}) and content type ({file.content_type})")
+
+    audio = await file.read()
 
     hash_audio = get_audio_hash(audio)
 
-    audiofile = to_process / f"{hash_audio}.wav"
+    audiofile = to_process / f"{hash_audio}.{extension}"
     if audiofile.exists():
         print("Already exists")
 

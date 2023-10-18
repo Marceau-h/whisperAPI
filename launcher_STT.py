@@ -18,14 +18,6 @@ def main(folder: Path):
         all_audios = to_process_dir.iterdir()
         all_audios = {e.stem: e for e in all_audios}
 
-        # to_process = {
-        #     e.stem for e in (
-        #         list(to_process_dir.glob("*.wav")).extend(
-        #             list(to_process_dir.glob("*.mp3"))).extend(
-        #             list(to_process_dir.glob("*.ogg"))).extend(
-        #             list(to_process_dir.glob("*.acc")))
-        #     )
-        # }
         to_process = {
             e.stem for e in to_process_dir.glob("*.[wmoa][apgc][v3gc]")
         }
