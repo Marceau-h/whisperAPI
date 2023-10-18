@@ -42,6 +42,7 @@ def process_file(audio_file: str | Path, model=None) -> dict:
 def modelloader(uri: str = "bofenghuang/whisper-large-v2-french"):
     model = whisper.load_model(uri)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"{device = }")
     try:
         model.to(device)
     except:
