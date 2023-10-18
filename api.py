@@ -31,7 +31,7 @@ async def write_upload(request: Request, api_key: str = Security(api_key_header)
 
     if api_key not in api_keys:
         print("Wrong API Key")
-        return {"error": "Wrong API Key", "status": "error"}
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
 
     audio = await request.body()
 
@@ -45,42 +45,57 @@ async def write_upload(request: Request, api_key: str = Security(api_key_header)
         if json_file.exists():
             print("Already processed")
             with json_file.open(mode="r", encoding="utf-8") as f:
-                return {"launched": False, "hash": hash_audio, "status": "done"}  # , "result": json.load(f)}
+                return JSONResponse(
+                    {"launched": False, "hash": hash_audio, "status": "done", "result": json.load(f)},
+                    status_code=302,
+                )
 
-        return {"launched": False, "hash": hash_audio, "status": "processing"}
+
+        return JSONResponse(
+            {"launched": False, "hash": hash_audio, "status": "processing"},
+            status_code=425,
+        )
 
 
     with open(to_process / f"{hash_audio}.wav", "wb") as f:
         f.write(audio)
 
-    return {"launched": True, "hash": hash_audio, "status": "new"}
+    return JSONResponse(
+        {"launched": True, "hash": hash_audio, "status": "new"},
+        status_code=202,
+        headers={"Location": f"/status/{hash_audio}"},
+    )
 
 
 @app.get("/status/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
     if api_key not in api_keys:
-        return {"error": "Wrong API Key", "status": "error"}
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
 
     jsonfile = results / f"{hash_audio}.json"
     audiofile = to_process / f"{hash_audio}.wav"
 
     if jsonfile.exists():
-        return {"status": "done"}
+        return JSONResponse(
+            {"status": "done"},
+            status_code=201,
+            headers={"Location": f"/result/{hash_audio}"},
+        )
 
     if audiofile.exists():
         return {"status": "processing"}
 
-    return {"status": "not found"}
+    return JSONResponse({"status": "not found"}, status_code=404)
 
 @app.get("/result/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
     if api_key not in api_keys:
-        return {"error": "Wrong API Key", "status": "error"}
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
 
     jsonfile = results / f"{hash_audio}.json"
 
     if not jsonfile.exists():
-        return {"status": "not found"}
+        return JSONResponse({"status": "not found"}, status_code=404)
 
     with jsonfile.open(mode="r", encoding="utf-8") as f:
         return {"status": "done", "result": json.load(f)}
