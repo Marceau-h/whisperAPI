@@ -14,13 +14,16 @@ def main(folder: Path):
 
     previous_empty = 0
     while True:
+
         to_process = {e.stem for e in to_process_dir.glob("*.wav")}
         results = {e.stem for e in results_dir.glob("*.json")}
         processing_set = to_process - results
 
         if not processing_set:
             previous_empty += 1
-            print(f"No new files since {previous_empty} iterations")
+            # print(f"No new files since {previous_empty} iterations")
+            if previous_empty == 10:
+                print("INFO : No new files for 10 iterations")
             sleep(min(60, 3 * previous_empty))  # Wait a bit before checking again, up to 1 minute
             continue
         else:
