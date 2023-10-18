@@ -37,23 +37,15 @@ def test():
 
             sleep(20)
 
-    r = requests.get(url + f"result/{hash_audio}", headers=headers)
+    r = requests.get(url + f"result/{hash_audio}/segments", headers=headers)
 
     data = r.json()
 
-    segments = [e["text"] for e in data["result"]["segments"]]
-    span = [(int(e['start']), int(e['end'])) for e in data["result"]["segments"]]
-
-    res = [
-        {
-            "span": s,
-            "text": t
-        }
-        for s, t in zip(span, segments)
-    ]
-
-    return res
+    return data
 
 
 if __name__ == "__main__":
-    print(test())
+    res = test()
+
+    print("\n\n\n\n")
+    print(res)
