@@ -4,6 +4,7 @@ from time import sleep
 
 from STT import STTManager
 
+
 def main(folder: Path):
     stt_manager = STTManager()
 
@@ -17,7 +18,17 @@ def main(folder: Path):
         all_audios = to_process_dir.iterdir()
         all_audios = {e.stem: e.name for e in all_audios}
 
-        to_process = {e.stem for e in (to_process_dir.glob("*.wav") + to_process_dir.glob("*.mp3") + to_process_dir.glob("*.ogg") + to_process_dir.glob("*.acc"))}
+        # to_process = {
+        #     e.stem for e in (
+        #         list(to_process_dir.glob("*.wav")).extend(
+        #             list(to_process_dir.glob("*.mp3"))).extend(
+        #             list(to_process_dir.glob("*.ogg"))).extend(
+        #             list(to_process_dir.glob("*.acc")))
+        #     )
+        # }
+        to_process = {
+            e.stem for e in to_process_dir.glob("*.[wmoa][apgc][v3gc]")
+        }
         results = {e.stem for e in results_dir.glob("*.json")}
         processing_set = to_process - results
 
