@@ -39,7 +39,7 @@ def process_file(audio_file: str | Path, model=None) -> dict:
     return result
 
 
-def modelloader(uri: str = "bofenghuang/whisper-large-v2-french"):
+def modelloader(uri: str = "openai/whisper-medium"):
     model = whisper.load_model(uri)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"{device = }")
