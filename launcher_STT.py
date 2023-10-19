@@ -29,7 +29,7 @@ def main(folder: Path):
             # print(f"No new files since {previous_empty} iterations")
             if previous_empty == 10:
                 print("INFO : No new files for 10 iterations")
-            sleep(min(60, 3 * previous_empty))  # Wait a bit before checking again, up to 1 minute
+            sleep(10)  # Wait a bit before checking again, up to 1 minute
             continue
         else:
             previous_empty = 0
