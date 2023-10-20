@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 from typing import Annotated
+from urllib import parse
 
 from fastapi import FastAPI, Request, Security, UploadFile
 from fastapi.responses import JSONResponse
@@ -21,6 +22,10 @@ results = Path("data/results")
 to_process = Path("data/to_process")
 
 
+def key_validation(api_key: str = Security(api_key_header)) -> bool:
+    api_key = parse.unquote(api_key)
+    return api_key in api_keys
+
 def get_audio_hash(audio):
     return hashlib.sha256(audio).hexdigest()
 
@@ -34,7 +39,7 @@ async def write_upload(
 
     print(f"Connnection from {request.client.host}, {api_key = }, {file.filename = }, {file.content_type = }")
 
-    if api_key not in api_keys:
+    if not key_validation(api_key):
         print("Wrong API Key")
         return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
 
@@ -82,7 +87,7 @@ async def write_upload(
 
 @app.get("/status/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
-    if api_key not in api_keys:
+    if not key_validation(api_key):
         return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
 
     jsonfile = results / f"{hash_audio}.json"
@@ -102,7 +107,7 @@ async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
 
 @app.get("/result/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
-    if api_key not in api_keys:
+    if not key_validation(api_key):
         return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
 
     jsonfile = results / f"{hash_audio}.json"
