@@ -95,15 +95,15 @@ async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
 
     if jsonfile.exists():
         return JSONResponse(
-            {"status": "done"},
+            {"status": "done", "hash": hash_audio},
             status_code=201,
             headers={"Location": f"/result/{hash_audio}"},
         )
 
     if audiofile.exists():
-        return {"status": "processing"}
+        return {"status": "processing", "hash": hash_audio}
 
-    return JSONResponse({"status": "not found"}, status_code=404)
+    return JSONResponse({"status": "not found", "hash": None}, status_code=404)
 
 @app.get("/result/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
