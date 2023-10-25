@@ -18,9 +18,8 @@ def main(folder: Path):
         all_audios = to_process_dir.iterdir()
         all_audios = {e.stem: e for e in all_audios}
 
-        to_process = {
-            e.stem for e in to_process_dir.glob("*.[wmoa][apgc][v3gc]")
-        }
+        to_process = set(list(to_process_dir.glob("*.wav")) + list(to_process_dir.glob("*.mp3")) + list(
+            to_process_dir.glob("*.ogg")) + list(to_process_dir.glob("*.flac")) + list(to_process_dir.glob("*.m4a")))
         results = {e.stem for e in results_dir.glob("*.json")}
         processing_set = to_process - results
 
