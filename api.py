@@ -21,6 +21,7 @@ api_keys = [e.strip() for e in api_keys]
 results = Path("data/results")
 to_process = Path("data/to_process")
 
+possible_suffixes = [".wav", ".mp3", ".ogg", ".flac", ".m4a"]
 
 def key_validation(api_key: str = Security(api_key_header)) -> bool:
     api_key = parse.unquote(api_key)
@@ -102,6 +103,12 @@ async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
 
     if audiofile.exists():
         return {"status": "processing", "hash": hash_audio}
+    else:
+        print(f"Not found as {audiofile.name}")
+        for audiofile in to_process.glob(f"{hash_audio}.*"):
+            if audiofile.suffix in possible_suffixes:
+                print(f"Found as {audiofile.name}")
+                return {"status": "processing", "hash": hash_audio}
 
     return JSONResponse({"status": "not found", "hash": None}, status_code=404)
 

@@ -4,6 +4,8 @@ from time import sleep
 
 from STT import STTManager
 
+possible_suffixes = [".wav", ".mp3", ".ogg", ".flac", ".m4a"]
+
 
 def main(folder: Path):
     stt_manager = STTManager()
@@ -18,8 +20,7 @@ def main(folder: Path):
         all_audios = to_process_dir.iterdir()
         all_audios = {e.stem: e for e in all_audios}
 
-        to_process = set(list(to_process_dir.glob("*.wav")) + list(to_process_dir.glob("*.mp3")) + list(
-            to_process_dir.glob("*.ogg")) + list(to_process_dir.glob("*.flac")) + list(to_process_dir.glob("*.m4a")))
+        to_process = {e.stem for e in all_audios.values() if e.suffix in possible_suffixes}
         results = {e.stem for e in results_dir.glob("*.json")}
         processing_set = to_process - results
 
