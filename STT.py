@@ -40,14 +40,14 @@ def process_file(audio_file: str | Path, model=None) -> dict:
 
 
 def modelloader(uri: str = "openai/whisper-medium"):
-    model = whisper.load_model(uri)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = whisper.load_model(uri, device=device)
     print(f"{device = }")
     try:
         model.to(device)
     except:
         print(f"Unable to load model on {device}")
-        device = torch.device("cpu")
-        model.to(device)
+        # device = torch.device("cpu")
+        # model.to(device)
 
     return model, device
