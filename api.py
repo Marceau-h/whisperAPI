@@ -23,9 +23,11 @@ to_process = Path("data/to_process")
 
 possible_suffixes = [".wav", ".mp3", ".ogg", ".flac", ".m4a"]
 
+
 def key_validation(api_key: str = Security(api_key_header)) -> bool:
     api_key = parse.unquote(api_key)
     return api_key in api_keys
+
 
 def get_audio_hash(audio):
     return hashlib.sha256(audio).hexdigest()
@@ -37,7 +39,6 @@ async def write_upload(
         request: Request,
         api_key: str = Security(api_key_header),
 ):
-
     print(f"Connnection from {request.client.host}, {api_key = }, {file.filename = }, {file.content_type = }")
 
     if not key_validation(api_key):
@@ -69,12 +70,10 @@ async def write_upload(
                     status_code=302,
                 )
 
-
         return JSONResponse(
             {"launched": False, "hash": hash_audio, "status": "processing"},
             status_code=425,
         )
-
 
     with open(to_process / f"{hash_audio}.wav", "wb") as f:
         f.write(audio)
@@ -112,6 +111,7 @@ async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
 
     return JSONResponse({"status": "not found", "hash": None}, status_code=404)
 
+
 @app.get("/result/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
     if not key_validation(api_key):
@@ -125,6 +125,7 @@ async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
     with jsonfile.open(mode="r", encoding="utf-8") as f:
         return {"status": "done", "result": json.load(f)}
 
+
 @app.get("/result/{hash_audio}/text", response_class=JSONResponse, status_code=200)
 async def get_result_text(hash_audio: str, api_key: str = Security(api_key_header)):
     result = await get_result(hash_audio, api_key)
@@ -133,6 +134,7 @@ async def get_result_text(hash_audio: str, api_key: str = Security(api_key_heade
         return result
 
     return {"status": "done", "result": result["result"]["text"]}
+
 
 @app.get("/result/{hash_audio}/segments", response_class=JSONResponse, status_code=200)
 async def get_result_segments(hash_audio: str, api_key: str = Security(api_key_header)):
@@ -155,6 +157,7 @@ async def get_result_segments(hash_audio: str, api_key: str = Security(api_key_h
     ]
 
     return {"status": "done", "result": res}
+
 
 @app.get("/result/{hash_audio}/words", response_class=JSONResponse, status_code=200)
 async def get_result_words(hash_audio: str, api_key: str = Security(api_key_header)):
@@ -179,10 +182,10 @@ async def get_result_words(hash_audio: str, api_key: str = Security(api_key_head
     return {"status": "done", "result": res}
 
 
-
 def main():
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=5464)
+
 
 if __name__ == "__main__":
     main()

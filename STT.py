@@ -50,19 +50,7 @@ def process_file(audio_file: str | Path, model=None) -> dict:
 def modelloader(uri: str = "medium"):  # "large" | "medium" | "small" | "tiny" | "openai/whisper-medium" ...
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = whisper.load_model(uri, device=device)
-    print(f"Before {model.device = }")
-    # model.load_state_dict(torch.load(uri, map_location=device))
     print(f"Cuda detected : {torch.cuda.is_available()}\n{device = }")
-    # try:
-    #     # `model =` Seemed useless bc the function is in place but ensures to free up memory upon deletion ?
-    #     model = model.to(device)
-    #     # model.to("cpu")
-    # except:
-    #     print(f"Unable to load model on {device}")
-    #     # device = torch.device("cpu")
-    #     # model.to(device)
-    print(f"After {model.device = }")
-
     return model, device
 
 
