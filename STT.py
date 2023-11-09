@@ -34,9 +34,9 @@ def process_file(audio_file: str | Path, model=None) -> dict:
             model,
             audio,
             language="fr",
-            beam_size=12,
-            best_of=12,
-            temperature=(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 5, 10),
+            beam_size=15,
+            best_of=15,
+            temperature=(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 5, 10, 20, 50, 100),
             detect_disfluencies=True,
             vad=True,
         )
