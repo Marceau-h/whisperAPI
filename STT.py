@@ -34,9 +34,9 @@ def process_file(audio_file: str | Path, model=None) -> dict:
             model,
             audio,
             language="fr",
-            beam_size=10,
-            best_of=10,
-            temperature=(0.0, 0.2, 0.4, 0.6, 0.8, 1.0),
+            beam_size=9,
+            best_of=9,
+            temperature=(0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 5, 10, 20),
             detect_disfluencies=True
         )
         # print(result)
@@ -46,7 +46,7 @@ def process_file(audio_file: str | Path, model=None) -> dict:
     return result
 
 
-def modelloader(uri: str = "medium"):  # "large" | "medium" | "small" | "tiny" | "openai/whisper-medium" ...
+def modelloader(uri: str = "openai/whisper-medium"):  # "large" | "medium" | "small" | "tiny" | "openai/whisper-medium" ...
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = whisper.load_model(uri, device=device)
     print(f"Cuda detected : {torch.cuda.is_available()}\n{device = }")
