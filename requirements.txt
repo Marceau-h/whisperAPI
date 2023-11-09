@@ -6,6 +6,7 @@ torchaudio
 
 nvidia-tensorrt
 transformers
+onnxruntime
 
 numba<=1.25
 llvmlite
