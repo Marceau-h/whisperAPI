@@ -37,7 +37,6 @@ def process_file(audio_file: str | Path, model=None) -> dict:
             beam_size=10,
             best_of=10,
             temperature=(0.0, 0.2, 0.4, 0.6, 0.8, 1.0),
-            vad=True,  # Voice Activity Detection
             detect_disfluencies=True
         )
         # print(result)
