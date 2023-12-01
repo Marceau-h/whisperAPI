@@ -33,6 +33,14 @@ def get_audio_hash(audio):
     return hashlib.sha256(audio).hexdigest()
 
 
+@app.get("/healthcheck", response_class=JSONResponse, status_code=200)
+async def healthcheck(api_key: str = Security(api_key_header)):
+    if not key_validation(api_key):
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
+
+    return {"status": "ok"}
+
+
 @app.post("/", response_class=JSONResponse, status_code=200)
 async def write_upload(
         file: UploadFile,
