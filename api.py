@@ -36,7 +36,7 @@ def get_audio_hash(audio):
 @app.get("/healthcheck", response_class=JSONResponse, status_code=200)
 async def healthcheck(api_key: str = Security(api_key_header)):
     if not key_validation(api_key):
-        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=401)
 
     return {"status": "ok"}
 
@@ -51,7 +51,7 @@ async def write_upload(
 
     if not key_validation(api_key):
         print("Wrong API Key")
-        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=401)
 
     if not file.content_type.startswith("audio/"):
         print("Wrong content type")
@@ -96,7 +96,7 @@ async def write_upload(
 @app.get("/status/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
     if not key_validation(api_key):
-        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=401)
 
     jsonfile = results / f"{hash_audio}.json"
     audiofile = to_process / f"{hash_audio}.wav"
@@ -123,7 +123,7 @@ async def get_status(hash_audio: str, api_key: str = Security(api_key_header)):
 @app.get("/result/{hash_audio}", response_class=JSONResponse, status_code=200)
 async def get_result(hash_audio: str, api_key: str = Security(api_key_header)):
     if not key_validation(api_key):
-        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=403)
+        return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=401)
 
     jsonfile = results / f"{hash_audio}.json"
 
