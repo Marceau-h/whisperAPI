@@ -47,9 +47,16 @@ def process_file(audio_file: str | Path, model=None) -> dict:
     return result
 
 
-def modelloader(uri: str = "openai/whisper-medium"):  # "large" | "medium" | "small" | "tiny" | "openai/whisper-medium" ...
+def modelloader(uri: str = "medium"):  # "large" | "medium" | "small" | "tiny" | "openai/whisper-medium" ...
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = whisper.load_model(uri, device=device)
+    try:
+        model = model.to(device)
+    except RuntimeError:
+        print("Cuda out of memory, switching to CPU")
+        device = torch.device("cpu")
+        model = model.to(device=device)
+
     print(f"Cuda detected : {torch.cuda.is_available()}\n{device = }")
     return model, device
 
