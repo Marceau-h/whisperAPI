@@ -93,26 +93,24 @@ class STTManager:
             else:
                 await asyncio.sleep(self.keep_model_for - diff)
 
-
-if __name__ == "__main__":
+async def main():
     print("Start")
 
     sm = STTManager()
     print("Init")
 
-    sm.process_file("../7206340881052372229.wav")
+    await sm.process_file("../7206340881052372229.wav")
     print("P1")
 
     sleep(10)
     print("Sleep")
 
-    sm.process_file("../7206340881052372229.wav")
+    await sm.process_file("../7206340881052372229.wav")
     print("P2")
 
     del sm
     print("Del")
 
 
-
-
-
+if __name__ == "__main__":
+    asyncio.run(main())
