@@ -144,7 +144,7 @@ async def get_result_segments(hash_audio: str, api_key: str = Security(api_key_h
         return result
 
     segments = [e["text"].strip() for e in result["result"]["segments"]]
-    span = [(int(e['start']), int(e['end'])) for e in result["result"]["segments"]]
+    span = [(e['start'], e['end']) for e in result["result"]["segments"]]
     confidence = [e["confidence"] for e in result["result"]["segments"]]
 
     res = [
@@ -167,7 +167,7 @@ async def get_result_words(hash_audio: str, api_key: str = Security(api_key_head
         return result
 
     words = [e["text"].strip() for segment in result["result"]["segments"] for e in segment["words"]]
-    span = [(int(e['start']), int(e['end'])) for segment in result["result"]["segments"] for e in segment["words"]]
+    span = [(e['start'], e['end']) for segment in result["result"]["segments"] for e in segment["words"]]
     confidence = [e["confidence"] for segment in result["result"]["segments"] for e in segment["words"]]
 
     res = [
