@@ -2,7 +2,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-from typing import Annotated
 from urllib import parse
 
 from fastapi import FastAPI, Request, Security, UploadFile
@@ -61,7 +60,11 @@ async def write_upload(
     if extension != file.content_type.split("/")[-1]:
         print(f"mismatch between extension ({extension}) and content type ({file.content_type})")
 
-    audio = await file.read()
+    # audio = await file.read()
+
+    audio = b''
+    async for chunk in request.stream():
+        audio += chunk
 
     hash_audio = get_audio_hash(audio)
 
