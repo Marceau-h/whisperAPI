@@ -63,12 +63,9 @@ async def write_upload(
 
     # audio = await file.read()
 
-    # audio = b''
-    # async for chunk in request.stream():
-    #     audio += chunk
-
-    audio = StreamingResponse(request.stream())
-    audio = await audio.body()
+    audio = b''
+    async for chunk in request.stream():
+        audio += chunk
 
     hash_audio = get_audio_hash(audio)
 
