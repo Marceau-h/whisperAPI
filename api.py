@@ -43,34 +43,29 @@ async def healthcheck(api_key: str = Security(api_key_header)):
 
 @app.post("/", response_class=JSONResponse, status_code=200)
 async def write_upload(
-        # file: UploadFile,
+        file: UploadFile,
         request: Request,
         api_key: str = Security(api_key_header),
 ):
-    # print(f"Connnection from {request.client.host}, {api_key = }, {file.filename = }, {file.content_type = }")
-    #
+    print(f"Connnection from {request.client.host}, {api_key = }, {file.filename = }, {file.content_type = }")
+
     if not key_validation(api_key):
         print("Wrong API Key")
         return JSONResponse({"error": "Wrong API Key", "status": "error"}, status_code=401)
-    #
-    # if not file.content_type.startswith("audio/"):
-    #     print("Wrong content type")
-    #     return JSONResponse({"error": "Wrong content type", "status": "error"}, status_code=400)
-    #
-    # extension = file.filename.split(".")[-1]
-    # if extension != file.content_type.split("/")[-1]:
-    #     print(f"mismatch between extension ({extension}) and content type ({file.content_type})")
 
-    # audio = await file.read()
+    if not file.content_type.startswith("audio/"):
+        print("Wrong content type")
+        return JSONResponse({"error": "Wrong content type", "status": "error"}, status_code=400)
 
-    audio = b''
-    async for chunk in request.stream():
-        audio += chunk
+    extension = file.filename.split(".")[-1]
+    if extension != file.content_type.split("/")[-1]:
+        print(f"mismatch between extension ({extension}) and content type ({file.content_type})")
+
+    audio = await file.read()
 
     hash_audio = get_audio_hash(audio)
 
-    # audiofile = to_process / f"{hash_audio}.{extension}"
-    audiofile = to_process / f"{hash_audio}.wav"
+    audiofile = to_process / f"{hash_audio}.{extension}"
     if audiofile.exists():
         print("Already exists")
 
