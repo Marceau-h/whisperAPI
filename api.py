@@ -32,6 +32,9 @@ def key_validation(api_key: str = Security(api_key_header)) -> bool:
 def get_audio_hash(audio):
     return hashlib.sha256(audio).hexdigest()
 
+@app.options("/healthcheck", response_class=JSONResponse, status_code=200)
+async def healthcheck_options():
+    return {"status": "ok"}
 
 @app.get("/healthcheck", response_class=JSONResponse, status_code=200)
 async def healthcheck(api_key: str = Security(api_key_header)):
