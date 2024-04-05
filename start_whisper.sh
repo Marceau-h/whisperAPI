@@ -2,7 +2,7 @@
 
 set -efaoux pipefail
 
-source .env_europarser > /dev/null 2>&1
+source .env_whisper > /dev/null 2>&1
 
 set +a
 
