@@ -83,7 +83,7 @@ printf "Starting STT launcher with command:\n"
 echo "$COMMAND"
 
 set +ue
-IS_RUNNING=$(ps -aux | grep launcher_STT.py)
+IS_RUNNING=$(ps -aux | grep launcher_STT.py | grep -v grep)
 if [ -z "$IS_RUNNING" ]
 then
     set -ue
